@@ -22,4 +22,16 @@ jobs:
           java-version: ${{ matrix.java }}
       - name: Test with Maven
         run: mvn test -B --file pom.xml
+
+      - name: SonarCloud Scan
+        if: matrix.java == '17-ea'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn clean verify sonar:sonar \
+          -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} \
+          -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION_KEY }} \
+          -Dsonar.projectName='jfreechart' \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 ...
