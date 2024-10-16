@@ -1,7 +1,7 @@
 ---
 name: Java CI
 
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
   test:
@@ -19,6 +19,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v4.4.0
         with:
+          distribution: 'oracle'
           java-version: ${{ matrix.java }}
       - name: Test with Maven
         run: mvn test -B --file pom.xml
