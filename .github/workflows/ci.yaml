@@ -26,6 +26,7 @@ jobs:
         run: mvn test -B --file pom.xml
 
       - name: Cache SonarCloud packages
+        if: matrix.java == '17-ea' && (matrix.os == 'ubuntu-latest' || matrix.os == 'macOS-latest')
         uses: actions/cache@v2
         with:
           path: ~/.sonar/cache
@@ -40,6 +41,7 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: SonarCloud Scan
+        if: matrix.java == '17-ea' && (matrix.os == 'ubuntu-latest' || matrix.os == 'macOS-latest')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
