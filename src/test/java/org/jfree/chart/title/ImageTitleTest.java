@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
  * USA.
  *
- * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+ * [Oracle and Java are registered trademarks of Oracle and/or its affiliates.
  * Other names may be trademarks of their respective owners.]
  *
  * -------------------
@@ -35,6 +35,18 @@
  */
 
 package org.jfree.chart.title;
+
+import org.jfree.chart.api.HorizontalAlignment;
+import org.jfree.chart.api.RectangleEdge;
+import org.jfree.chart.api.RectangleInsets;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for the {@link ImageTitle} class.
@@ -91,6 +103,9 @@ public class ImageTitleTest {
     }
 
     private static final double EPSILON = 0.00000001;
+    private Image mockImage;
+    private final String CONSTRUCTOR_NULL_ERROR_MESSAGE = "Null 'image' " +
+            "argument.";
 
 //    /**
 //     * Check the width and height.
@@ -126,4 +141,33 @@ public class ImageTitleTest {
 //        assertEquals(116.0, s.getHeight(), EPSILON);
 //    }
 
+    @BeforeEach
+    public void setUp() {
+        mockImage = Mockito.mock(BufferedImage.class);
+    }
+
+    @Test
+    public void testConstructor() {
+        ImageTitle imageTitle = new ImageTitle(mockImage);
+        assertNotNull(imageTitle);
+        assertEquals(mockImage, imageTitle.getImage());
+        assertEquals(RectangleEdge.TOP, imageTitle.getPosition());
+        assertEquals(HorizontalAlignment.CENTER, imageTitle.getHorizontalAlignment());
+        assertEquals(new RectangleInsets(1, 1, 1, 1), imageTitle.getPadding());
+    }
+
+    @Test
+    public void testConstructorWithNullImage() {
+        assertThrows(NullPointerException.class,
+                () -> new ImageTitle(null));
+    }
+
+    @Test
+    public void testConstructorWithNullImageErrorMessage() {
+        Exception exception = assertThrows(NullPointerException.class,
+                () -> new ImageTitle(null));
+        String actualMessage = exception.getMessage();
+
+        assertEquals(CONSTRUCTOR_NULL_ERROR_MESSAGE, actualMessage);
+    }
 }
