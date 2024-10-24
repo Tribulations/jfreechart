@@ -55,7 +55,9 @@ public class TitleTest {
     public void setUp() {
         textTitle = new TextTitle();
         HorizontalAlignment horizontalAlignment = HorizontalAlignment.CENTER;
+        VerticalAlignment verticalAlignment = VerticalAlignment.CENTER;
         textTitle.setHorizontalAlignment(horizontalAlignment);
+        textTitle.setVerticalAlignment(verticalAlignment);
     }
     /**
      * Some checks for the equals() method.
@@ -108,4 +110,13 @@ public class TitleTest {
     public void testSetHorizontalAlignmentNullValue() {
         assertThrows(IllegalArgumentException.class, () -> textTitle.setHorizontalAlignment(null));
     }
+
+    /**
+     * Asserts that the correct exception type is thrown when a null argument is provided.
+     */
+    @Test
+    public void testSetVerticalAlignmentNullValue() {
+        assertThrows(IllegalArgumentException.class, () -> textTitle.setVerticalAlignment(null));
+    }
+
 }
