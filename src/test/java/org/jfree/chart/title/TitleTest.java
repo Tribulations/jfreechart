@@ -119,4 +119,12 @@ public class TitleTest {
         assertThrows(IllegalArgumentException.class, () -> textTitle.setVerticalAlignment(null));
     }
 
+    /**
+     * Asserts that the correct exception type is thrown when a null argument is provided.
+     */
+    @Test
+    public void testSetPositionNullValue() {
+        assertThrows(IllegalArgumentException.class, () -> textTitle.setPosition(null));
+    }
+
 }
