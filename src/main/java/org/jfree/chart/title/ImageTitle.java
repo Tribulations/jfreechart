@@ -75,7 +75,8 @@ public class ImageTitle extends Title {
      * @param image  the image ({@code null} not permitted).
      */
     public ImageTitle(Image image) {
-        this(image, image.getHeight(null), image.getWidth(null),
+        this(requireNonNull(image, "Null 'image' argument."), image.getHeight(null),
+                image.getWidth(null),
                 Title.DEFAULT_POSITION, Title.DEFAULT_HORIZONTAL_ALIGNMENT,
                 Title.DEFAULT_VERTICAL_ALIGNMENT, Title.DEFAULT_PADDING);
     }
@@ -92,7 +93,8 @@ public class ImageTitle extends Title {
                       HorizontalAlignment horizontalAlignment,
                       VerticalAlignment verticalAlignment) {
 
-        this(image, image.getHeight(null), image.getWidth(null),
+        this(requireNonNull(image, "Null 'image' argument."), image.getHeight(null),
+                image.getWidth(null),
                 position, horizontalAlignment, verticalAlignment,
                 Title.DEFAULT_PADDING);
     }
@@ -117,9 +119,6 @@ public class ImageTitle extends Title {
                       RectangleInsets padding) {
 
         super(position, horizontalAlignment, verticalAlignment, padding);
-        if (image == null) {
-            throw new NullPointerException("Null 'image' argument.");
-        }
         this.image = image;
         setHeight(height);
         setWidth(width);
@@ -303,6 +302,13 @@ public class ImageTitle extends Title {
         return new Size2D(chartArea.getWidth() + leftSpace + rightSpace,
             h + topSpace + bottomSpace);
 
+    }
+
+    private static <T> T requireNonNull(T obj, String errorMessage) {
+        if (obj == null) {
+            throw new NullPointerException(errorMessage);
+        }
+        return obj;
     }
 
     /**
