@@ -42,7 +42,6 @@ import org.jfree.chart.api.RectangleEdge;
 import org.jfree.chart.api.VerticalAlignment;
 import static org.mockito.Mockito.*;
 
-import org.jfree.chart.event.TitleChangeEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
