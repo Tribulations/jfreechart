@@ -163,6 +163,11 @@ public class TitleTest {
         verify(mockVisitor, times(1)).visit(textTitle);
     }
 
+    /**
+     * Verifies that a listener is correctly added to the listenerList.
+     * @throws NoSuchFieldException if field is not found.
+     * @throws IllegalAccessException if field cannot be accessed.
+     */
     @Test
     public void testAddChangeListener() throws NoSuchFieldException, IllegalAccessException {
         //setup
@@ -176,13 +181,37 @@ public class TitleTest {
         assertEquals(1, list.getListenerCount(TitleChangeListener.class));
     }
 
+    /**
+     * Verifies that the same listener cannot be added to the listenerList twice.
+     * @throws NoSuchFieldException if field is not found.
+     * @throws IllegalAccessException if field cannot be accessed.
+     */
+    @Test
+    public void testAddChangeListenerTwice() throws NoSuchFieldException, IllegalAccessException {
+        //setup
+        TitleChangeListener listener = mock(TitleChangeListener.class);
+        Field field = Title.class.getDeclaredField("listenerList");
+        field.setAccessible(true);
+        EventListenerList list = (EventListenerList) field.get(textTitle);
+        // exercise
+        textTitle.addChangeListener(listener);
+        textTitle.addChangeListener(listener);
+        // assert
+        assertEquals(1, list.getListenerCount(TitleChangeListener.class));
+    }
+
+    /**
+     * Verifies that a listener is successfully removed by removeChangeListener().
+     * @throws NoSuchFieldException if field is not found.
+     * @throws IllegalAccessException if field cannot be accessed.
+     */
     @Test
     public void testRemoveChangeListener() throws NoSuchFieldException, IllegalAccessException {
         //setup
         TitleChangeListener listener1 = mock(TitleChangeListener.class);
         TitleChangeListener listener2 = mock(TitleChangeListener.class);
         Field field = Title.class.getDeclaredField("listenerList");
-        field.setAccessible(true);
+        field.setAccessible(true); // access private field by using reflection
         EventListenerList list = (EventListenerList) field.get(textTitle);
         textTitle.addChangeListener(listener1);
         textTitle.addChangeListener(listener2);
@@ -194,5 +223,26 @@ public class TitleTest {
         assertEquals(1, list.getListenerCount(TitleChangeListener.class));
     }
 
-
+    /**
+     * Ensure that the removeChangeListener method can handle the special case of trying to remove
+     * a listener which is not present.
+     * @throws NoSuchFieldException if field is not found.
+     * @throws IllegalAccessException if field cannot be accessed.
+     */
+    @Test
+    public void testRemoveChangeListenerTwice() throws NoSuchFieldException, IllegalAccessException {
+        //setup
+        TitleChangeListener listener1 = mock(TitleChangeListener.class);
+        TitleChangeListener listener2 = mock(TitleChangeListener.class);
+        Field field = Title.class.getDeclaredField("listenerList");
+        field.setAccessible(true); // access private field by using reflection
+        EventListenerList list = (EventListenerList) field.get(textTitle);
+        textTitle.addChangeListener(listener1);
+        textTitle.addChangeListener(listener2);
+        // exercise
+        textTitle.removeChangeListener(listener1);
+        textTitle.removeChangeListener(listener1);
+        // assert
+        assertEquals(1, list.getListenerCount(TitleChangeListener.class));
+    }
 }
