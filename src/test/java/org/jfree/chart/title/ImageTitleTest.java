@@ -338,7 +338,7 @@ public class ImageTitleTest {
     public void testDrawVerticalPositionLeft() {
         ImageTitle imageTitle = new ImageTitle(mockImage,
                 RectangleEdge.LEFT, Title.DEFAULT_HORIZONTAL_ALIGNMENT,
-                Title.DEFAULT_VERTICAL_ALIGNMENT);
+                VerticalAlignment.BOTTOM);
         ImageTitle spyTitle = spy(imageTitle);
 
         spyTitle.draw(g2, area);
@@ -350,7 +350,7 @@ public class ImageTitleTest {
     public void testDrawVerticalPositionRight() {
         ImageTitle imageTitle = new ImageTitle(mockImage,
                 RectangleEdge.RIGHT, Title.DEFAULT_HORIZONTAL_ALIGNMENT,
-                Title.DEFAULT_VERTICAL_ALIGNMENT);
+                VerticalAlignment.TOP);
         ImageTitle spyTitle = spy(imageTitle);
 
         spyTitle.draw(g2, area);
@@ -366,7 +366,55 @@ public class ImageTitleTest {
         ImageTitle spyTitle = spy(imageTitle);
         when(spyTitle.getPosition()).thenReturn(null);
 
-        assertThrows(RuntimeException.class, () -> spyTitle.draw(g2, area));
+        Exception exception = assertThrows(RuntimeException.class,
+                () -> spyTitle.draw(g2, area));
+        assertEquals("Invalid title position.", exception.getMessage());
     }
 
+    @Test
+    public void testEquals() {
+        Image mockImage1 = mock(Image.class);
+        Image mockImage2 = mock(Image.class);
+
+        ImageTitle title1 = new ImageTitle(mockImage1);
+        ImageTitle title2 = new ImageTitle(mockImage1);
+        ImageTitle title3 = new ImageTitle(mockImage2);
+        ImageTitle title4 = new ImageTitle(mockImage1);
+        Title title = new TextTitle("hello");
+
+        assertTrue(title1.equals(title2) && title2.equals(title1));
+        assertTrue(title1.equals(title2) && title2.equals(title4) && title1.equals(title4));
+        assertEquals(title1, title1);
+        assertEquals(title1, title2);
+        assertEquals(title1, title2);
+        assertNotEquals(title1, title);
+        assertNotEquals(null, title1);
+        assertNotEquals(title1, title3);
+    }
+
+    @Test
+    public void testHashCode() {
+        Image mockImage1 = mock(Image.class);
+        Image mockImage2 = mock(Image.class);
+
+        ImageTitle title1 = new ImageTitle(mockImage1);
+        ImageTitle title2 = new ImageTitle(mockImage1);
+        ImageTitle title3 = new ImageTitle(mockImage2);
+
+        assertEquals(title1.hashCode(), title2.hashCode());
+        assertNotEquals(title1.hashCode(), title3.hashCode());
+    }
+
+    @Test
+    public void testDrawThreeArgs() {
+
+        ImageTitle imageTitle = new ImageTitle(mockImage,
+                Title.DEFAULT_POSITION, Title.DEFAULT_HORIZONTAL_ALIGNMENT,
+                Title.DEFAULT_VERTICAL_ALIGNMENT);
+
+        ImageTitle spyTitle = spy(imageTitle);
+        Object result = spyTitle.draw(g2, area, null);
+        assertNull(result);
+        verify(spyTitle).draw(g2, area);
+    }
 }
