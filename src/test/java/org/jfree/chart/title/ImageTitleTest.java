@@ -40,16 +40,15 @@ import org.jfree.chart.api.HorizontalAlignment;
 import org.jfree.chart.api.RectangleEdge;
 import org.jfree.chart.api.RectangleInsets;
 import org.jfree.chart.api.VerticalAlignment;
-import org.jfree.chart.block.Size2D;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests for the {@link ImageTitle} class.
@@ -106,7 +105,10 @@ public class ImageTitleTest {
     }
 
     private static final double EPSILON = 0.00000001;
+
     private Image mockImage;
+    private Graphics2D g2;
+    private Rectangle2D area;
     private final int WIDTH = 100;
     private final int HEIGHT = 50;
 
@@ -146,7 +148,11 @@ public class ImageTitleTest {
 
     @BeforeEach
     public void setUp() {
-        mockImage = Mockito.mock(BufferedImage.class);
+        mockImage = mock(BufferedImage.class);
+        BufferedImage bufferedImage = new BufferedImage(WIDTH, HEIGHT,
+                BufferedImage.TYPE_INT_RGB);
+        g2 = bufferedImage.createGraphics();
+        area = new Rectangle2D.Double(0, 0, WIDTH, HEIGHT);
     }
 
     @Test
@@ -302,4 +308,65 @@ public class ImageTitleTest {
 
         assertEquals(minPadding, imageTitle.getPadding());
     }
+
+    @Test
+    public void testDrawHorizontalPositionTop() {
+        ImageTitle imageTitle = new ImageTitle(mockImage, RectangleEdge.TOP,
+                Title.DEFAULT_HORIZONTAL_ALIGNMENT,
+                Title.DEFAULT_VERTICAL_ALIGNMENT);
+        ImageTitle spyTitle = spy(imageTitle);
+
+        spyTitle.draw(g2, area);
+
+        verify(spyTitle).drawHorizontal(g2, area);
+        g2.dispose();
+    }
+
+    @Test
+    public void testDrawHorizontalPositionBottom() {
+        ImageTitle imageTitle = new ImageTitle(mockImage,
+                RectangleEdge.BOTTOM, Title.DEFAULT_HORIZONTAL_ALIGNMENT,
+                Title.DEFAULT_VERTICAL_ALIGNMENT);
+        ImageTitle spyTitle = spy(imageTitle);
+
+        spyTitle.draw(g2, area);
+
+        verify(spyTitle).drawHorizontal(g2, area);
+    }
+
+    @Test
+    public void testDrawVerticalPositionLeft() {
+        ImageTitle imageTitle = new ImageTitle(mockImage,
+                RectangleEdge.LEFT, Title.DEFAULT_HORIZONTAL_ALIGNMENT,
+                Title.DEFAULT_VERTICAL_ALIGNMENT);
+        ImageTitle spyTitle = spy(imageTitle);
+
+        spyTitle.draw(g2, area);
+
+        verify(spyTitle).drawVertical(g2, area);
+    }
+
+    @Test
+    public void testDrawVerticalPositionRight() {
+        ImageTitle imageTitle = new ImageTitle(mockImage,
+                RectangleEdge.RIGHT, Title.DEFAULT_HORIZONTAL_ALIGNMENT,
+                Title.DEFAULT_VERTICAL_ALIGNMENT);
+        ImageTitle spyTitle = spy(imageTitle);
+
+        spyTitle.draw(g2, area);
+
+        verify(spyTitle).drawVertical(g2, area);
+    }
+
+    @Test
+    public void testDrawInvalidPosition() {
+        ImageTitle imageTitle = new ImageTitle(mockImage, Title.DEFAULT_POSITION,
+                Title.DEFAULT_HORIZONTAL_ALIGNMENT,
+                Title.DEFAULT_VERTICAL_ALIGNMENT);
+        ImageTitle spyTitle = spy(imageTitle);
+        when(spyTitle.getPosition()).thenReturn(null);
+
+        assertThrows(RuntimeException.class, () -> spyTitle.draw(g2, area));
+    }
+
 }
