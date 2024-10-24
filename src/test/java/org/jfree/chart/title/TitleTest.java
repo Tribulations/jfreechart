@@ -40,6 +40,7 @@ import org.jfree.chart.api.HorizontalAlignment;
 import org.jfree.chart.api.RectangleEdge;
 import org.jfree.chart.api.VerticalAlignment;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,7 +49,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * Tests for the abstract {@link Title} class.
  */
 public class TitleTest {
+    TextTitle textTitle;
 
+    @BeforeEach
+    public void setUp() {
+        textTitle = new TextTitle();
+        HorizontalAlignment horizontalAlignment = HorizontalAlignment.CENTER;
+        textTitle.setHorizontalAlignment(horizontalAlignment);
+    }
     /**
      * Some checks for the equals() method.
      */
@@ -93,4 +101,11 @@ public class TitleTest {
         assertEquals(h1, h2);
     }
 
+    /**
+     * Asserts that the correct exception type is thrown when a null argument is provided.
+     */
+    @Test
+    public void testSetHorizontalAlignmentNullValue() {
+        assertThrows(IllegalArgumentException.class, () -> textTitle.setHorizontalAlignment(null));
+    }
 }
