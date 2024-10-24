@@ -206,4 +206,29 @@ public class ImageTitleTest {
 
         assertEquals(position, imageTitle.getPosition());
     }
+
+    @Test
+    public void testConstructorHorizontalAlignmentRight() {
+        HorizontalAlignment alignment = HorizontalAlignment.RIGHT;
+        ImageTitle imageTitle = new ImageTitle(mockImage, RectangleEdge.TOP,
+                alignment, VerticalAlignment.CENTER);
+        assertEquals(alignment, imageTitle.getHorizontalAlignment());
+    }
+
+    @Test
+    public void testConstructorHorizontalAlignmentCenter() {
+        HorizontalAlignment alignment = HorizontalAlignment.CENTER;
+        ImageTitle imageTitle = new ImageTitle(mockImage, RectangleEdge.TOP,
+                alignment, VerticalAlignment.CENTER);
+        assertEquals(alignment, imageTitle.getHorizontalAlignment());
+    }
+
+    @Test
+    public void testConstructorHorizontalAlignmentLeft() {
+        HorizontalAlignment alignment = HorizontalAlignment.LEFT;
+        ImageTitle imageTitle = new ImageTitle(mockImage, RectangleEdge.TOP,
+                alignment, VerticalAlignment.CENTER);
+        assertEquals(alignment, imageTitle.getHorizontalAlignment());
+    }
+
 }
