@@ -39,9 +39,9 @@ package org.jfree.chart.title;
 import org.jfree.chart.api.HorizontalAlignment;
 import org.jfree.chart.api.RectangleEdge;
 import org.jfree.chart.api.RectangleInsets;
+import org.jfree.chart.api.VerticalAlignment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -169,5 +169,41 @@ public class ImageTitleTest {
         String actualMessage = exception.getMessage();
 
         assertEquals(CONSTRUCTOR_NULL_ERROR_MESSAGE, actualMessage);
+    }
+
+    @Test
+    public void testConstructorPositionRectangleEdgeTop() {
+        RectangleEdge position = RectangleEdge.TOP;
+        ImageTitle imageTitle = new ImageTitle(mockImage, position,
+                HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
+
+        assertEquals(position, imageTitle.getPosition());
+    }
+
+    @Test
+    public void testConstructorPositionRectangleEdgeBottom() {
+        RectangleEdge position = RectangleEdge.BOTTOM;
+        ImageTitle imageTitle = new ImageTitle(mockImage, position,
+                HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
+
+        assertEquals(position, imageTitle.getPosition());
+    }
+
+    @Test
+    public void testConstructorPositionRectangleEdgeLeft() {
+        RectangleEdge position = RectangleEdge.LEFT;
+        ImageTitle imageTitle = new ImageTitle(mockImage, position,
+                HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
+
+        assertEquals(position, imageTitle.getPosition());
+    }
+
+    @Test
+    public void testConstructorPositionRectangleEdgeRight() {
+        RectangleEdge position = RectangleEdge.RIGHT;
+        ImageTitle imageTitle = new ImageTitle(mockImage, position,
+                HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
+
+        assertEquals(position, imageTitle.getPosition());
     }
 }
