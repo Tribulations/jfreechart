@@ -104,8 +104,6 @@ public class ImageTitleTest {
 
     private static final double EPSILON = 0.00000001;
     private Image mockImage;
-    private final String CONSTRUCTOR_NULL_ERROR_MESSAGE = "Null 'image' " +
-            "argument.";
 
 //    /**
 //     * Check the width and height.
@@ -168,6 +166,8 @@ public class ImageTitleTest {
                 () -> new ImageTitle(null));
         String actualMessage = exception.getMessage();
 
+        String CONSTRUCTOR_NULL_ERROR_MESSAGE = "Null 'image' " +
+                "argument.";
         assertEquals(CONSTRUCTOR_NULL_ERROR_MESSAGE, actualMessage);
     }
 
@@ -212,6 +212,7 @@ public class ImageTitleTest {
         HorizontalAlignment alignment = HorizontalAlignment.RIGHT;
         ImageTitle imageTitle = new ImageTitle(mockImage, RectangleEdge.TOP,
                 alignment, VerticalAlignment.CENTER);
+
         assertEquals(alignment, imageTitle.getHorizontalAlignment());
     }
 
@@ -220,6 +221,7 @@ public class ImageTitleTest {
         HorizontalAlignment alignment = HorizontalAlignment.CENTER;
         ImageTitle imageTitle = new ImageTitle(mockImage, RectangleEdge.TOP,
                 alignment, VerticalAlignment.CENTER);
+
         assertEquals(alignment, imageTitle.getHorizontalAlignment());
     }
 
@@ -228,7 +230,34 @@ public class ImageTitleTest {
         HorizontalAlignment alignment = HorizontalAlignment.LEFT;
         ImageTitle imageTitle = new ImageTitle(mockImage, RectangleEdge.TOP,
                 alignment, VerticalAlignment.CENTER);
+
         assertEquals(alignment, imageTitle.getHorizontalAlignment());
     }
 
+    @Test
+    public void testConstructorVerticalAlignmentTop() {
+        VerticalAlignment alignment = VerticalAlignment.TOP;
+        ImageTitle imageTitle = new ImageTitle(mockImage, RectangleEdge.TOP,
+                HorizontalAlignment.CENTER, alignment);
+
+        assertEquals(alignment, imageTitle.getVerticalAlignment());
+    }
+
+    @Test
+    public void testConstructorVerticalAlignmentCenter() {
+        VerticalAlignment alignment = VerticalAlignment.CENTER;
+        ImageTitle imageTitle = new ImageTitle(mockImage, RectangleEdge.TOP,
+                HorizontalAlignment.CENTER, alignment);
+
+        assertEquals(alignment, imageTitle.getVerticalAlignment());
+    }
+
+    @Test
+    public void testConstructorVerticalAlignmentBottom() {
+        VerticalAlignment alignment = VerticalAlignment.BOTTOM;
+        ImageTitle imageTitle = new ImageTitle(mockImage, RectangleEdge.TOP,
+                HorizontalAlignment.CENTER, alignment);
+
+        assertEquals(alignment, imageTitle.getVerticalAlignment());
+    }
 }
