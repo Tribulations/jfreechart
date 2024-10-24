@@ -330,6 +330,11 @@ public abstract class Title extends AbstractBlock
      * @param listener  the object that is being registered.
      */
     public void addChangeListener(TitleChangeListener listener) {
+        for (TitleChangeListener l : listenerList.getListeners(TitleChangeListener.class)) {
+            if (l.equals(listener)) {
+                return;
+            }
+        }
         this.listenerList.add(TitleChangeListener.class, listener);
     }
 
