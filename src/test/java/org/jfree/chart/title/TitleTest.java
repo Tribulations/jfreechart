@@ -36,10 +36,13 @@
 
 package org.jfree.chart.title;
 
+import org.jfree.chart.ChartElementVisitor;
 import org.jfree.chart.api.HorizontalAlignment;
 import org.jfree.chart.api.RectangleEdge;
 import org.jfree.chart.api.VerticalAlignment;
+import static org.mockito.Mockito.*;
 
+import org.jfree.chart.event.TitleChangeEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -50,14 +53,16 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class TitleTest {
     TextTitle textTitle;
+    VerticalAlignment verticalAlignment = VerticalAlignment.TOP;
+    HorizontalAlignment horizontalAlignment = HorizontalAlignment.LEFT;
+    RectangleEdge position = RectangleEdge.BOTTOM;
 
     @BeforeEach
     public void setUp() {
         textTitle = new TextTitle();
-        HorizontalAlignment horizontalAlignment = HorizontalAlignment.CENTER;
-        VerticalAlignment verticalAlignment = VerticalAlignment.CENTER;
-        textTitle.setHorizontalAlignment(horizontalAlignment);
         textTitle.setVerticalAlignment(verticalAlignment);
+        textTitle.setHorizontalAlignment(horizontalAlignment);
+        textTitle.setPosition(position);
     }
     /**
      * Some checks for the equals() method.
@@ -107,7 +112,7 @@ public class TitleTest {
      * Asserts that the correct exception type is thrown when a null argument is provided.
      */
     @Test
-    public void testSetHorizontalAlignmentNullValue() {
+    void testSetHorizontalAlignmentNullValue() {
         assertThrows(IllegalArgumentException.class, () -> textTitle.setHorizontalAlignment(null));
     }
 
@@ -115,7 +120,7 @@ public class TitleTest {
      * Asserts that the correct exception type is thrown when a null argument is provided.
      */
     @Test
-    public void testSetVerticalAlignmentNullValue() {
+    void testSetVerticalAlignmentNullValue() {
         assertThrows(IllegalArgumentException.class, () -> textTitle.setVerticalAlignment(null));
     }
 
@@ -123,8 +128,38 @@ public class TitleTest {
      * Asserts that the correct exception type is thrown when a null argument is provided.
      */
     @Test
-    public void testSetPositionNullValue() {
+    void testSetPositionNullValue() {
         assertThrows(IllegalArgumentException.class, () -> textTitle.setPosition(null));
     }
+
+    /**
+     * Verify that notify is correctly set to false.
+     */
+    @Test
+    void testSetNotifyToFalse() {
+        textTitle.setNotify(false);
+        assertFalse(textTitle.getNotify());
+    }
+
+    /**
+     * Verify that notify is correctly set to true.
+     */
+    @Test
+    void testSetNotifyToTrue() {
+        textTitle.setNotify(true);
+        assertTrue(textTitle.getNotify());
+    }
+
+    /**
+     * Verify that visit is called exactly once when Title::receive is called.
+     */
+    @Test
+    void testReceiveCallsVisit() {
+        ChartElementVisitor mockVisitor = mock(ChartElementVisitor.class);
+        textTitle.receive(mockVisitor);
+
+        verify(mockVisitor, times(1)).visit(textTitle);
+    }
+
 
 }
