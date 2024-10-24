@@ -36,12 +36,15 @@
 
 package org.jfree.chart.title;
 
+import java.lang.reflect.Field;
+import javax.swing.event.EventListenerList;
 import org.jfree.chart.ChartElementVisitor;
 import org.jfree.chart.api.HorizontalAlignment;
 import org.jfree.chart.api.RectangleEdge;
 import org.jfree.chart.api.VerticalAlignment;
 import static org.mockito.Mockito.*;
 
+import org.jfree.chart.event.TitleChangeListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -158,6 +161,37 @@ public class TitleTest {
         textTitle.receive(mockVisitor);
 
         verify(mockVisitor, times(1)).visit(textTitle);
+    }
+
+    @Test
+    public void testAddChangeListener() throws NoSuchFieldException, IllegalAccessException {
+        //setup
+        TitleChangeListener listener = mock(TitleChangeListener.class);
+        Field field = Title.class.getDeclaredField("listenerList");
+        field.setAccessible(true);
+        EventListenerList list = (EventListenerList) field.get(textTitle);
+        // exercise
+        textTitle.addChangeListener(listener);
+        // assert
+        assertEquals(1, list.getListenerCount(TitleChangeListener.class));
+    }
+
+    @Test
+    public void testRemoveChangeListener() throws NoSuchFieldException, IllegalAccessException {
+        //setup
+        TitleChangeListener listener1 = mock(TitleChangeListener.class);
+        TitleChangeListener listener2 = mock(TitleChangeListener.class);
+        Field field = Title.class.getDeclaredField("listenerList");
+        field.setAccessible(true);
+        EventListenerList list = (EventListenerList) field.get(textTitle);
+        textTitle.addChangeListener(listener1);
+        textTitle.addChangeListener(listener2);
+
+        // exercise
+        textTitle.removeChangeListener(listener1);
+
+        // assert
+        assertEquals(1, list.getListenerCount(TitleChangeListener.class));
     }
 
 
