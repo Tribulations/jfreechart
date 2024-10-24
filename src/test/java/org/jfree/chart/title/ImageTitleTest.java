@@ -40,10 +40,13 @@ import org.jfree.chart.api.HorizontalAlignment;
 import org.jfree.chart.api.RectangleEdge;
 import org.jfree.chart.api.RectangleInsets;
 import org.jfree.chart.api.VerticalAlignment;
+import org.jfree.chart.block.Size2D;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import java.awt.Image;
+
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -104,6 +107,8 @@ public class ImageTitleTest {
 
     private static final double EPSILON = 0.00000001;
     private Image mockImage;
+    private final int WIDTH = 100;
+    private final int HEIGHT = 50;
 
 //    /**
 //     * Check the width and height.
@@ -149,9 +154,10 @@ public class ImageTitleTest {
         ImageTitle imageTitle = new ImageTitle(mockImage);
         assertNotNull(imageTitle);
         assertEquals(mockImage, imageTitle.getImage());
-        assertEquals(RectangleEdge.TOP, imageTitle.getPosition());
-        assertEquals(HorizontalAlignment.CENTER, imageTitle.getHorizontalAlignment());
-        assertEquals(new RectangleInsets(1, 1, 1, 1), imageTitle.getPadding());
+        assertEquals(Title.DEFAULT_POSITION, imageTitle.getPosition());
+        assertEquals(Title.DEFAULT_HORIZONTAL_ALIGNMENT, imageTitle.getHorizontalAlignment());
+        assertEquals(Title.DEFAULT_VERTICAL_ALIGNMENT, imageTitle.getVerticalAlignment());
+        assertEquals(Title.DEFAULT_PADDING, imageTitle.getPadding());
     }
 
     @Test
@@ -166,16 +172,14 @@ public class ImageTitleTest {
                 () -> new ImageTitle(null));
         String actualMessage = exception.getMessage();
 
-        String CONSTRUCTOR_NULL_ERROR_MESSAGE = "Null 'image' " +
-                "argument.";
-        assertEquals(CONSTRUCTOR_NULL_ERROR_MESSAGE, actualMessage);
+        assertEquals("Null 'image' argument.", actualMessage);
     }
 
     @Test
     public void testConstructorPositionRectangleEdgeTop() {
-        RectangleEdge position = RectangleEdge.TOP;
+        RectangleEdge position = Title.DEFAULT_POSITION;
         ImageTitle imageTitle = new ImageTitle(mockImage, position,
-                HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
+                Title.DEFAULT_HORIZONTAL_ALIGNMENT, Title.DEFAULT_VERTICAL_ALIGNMENT);
 
         assertEquals(position, imageTitle.getPosition());
     }
@@ -184,7 +188,7 @@ public class ImageTitleTest {
     public void testConstructorPositionRectangleEdgeBottom() {
         RectangleEdge position = RectangleEdge.BOTTOM;
         ImageTitle imageTitle = new ImageTitle(mockImage, position,
-                HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
+                Title.DEFAULT_HORIZONTAL_ALIGNMENT, Title.DEFAULT_VERTICAL_ALIGNMENT);
 
         assertEquals(position, imageTitle.getPosition());
     }
@@ -193,7 +197,7 @@ public class ImageTitleTest {
     public void testConstructorPositionRectangleEdgeLeft() {
         RectangleEdge position = RectangleEdge.LEFT;
         ImageTitle imageTitle = new ImageTitle(mockImage, position,
-                HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
+                Title.DEFAULT_HORIZONTAL_ALIGNMENT, Title.DEFAULT_VERTICAL_ALIGNMENT);
 
         assertEquals(position, imageTitle.getPosition());
     }
@@ -202,7 +206,8 @@ public class ImageTitleTest {
     public void testConstructorPositionRectangleEdgeRight() {
         RectangleEdge position = RectangleEdge.RIGHT;
         ImageTitle imageTitle = new ImageTitle(mockImage, position,
-                HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
+                Title.DEFAULT_HORIZONTAL_ALIGNMENT,
+                Title.DEFAULT_VERTICAL_ALIGNMENT);
 
         assertEquals(position, imageTitle.getPosition());
     }
@@ -210,8 +215,8 @@ public class ImageTitleTest {
     @Test
     public void testConstructorHorizontalAlignmentRight() {
         HorizontalAlignment alignment = HorizontalAlignment.RIGHT;
-        ImageTitle imageTitle = new ImageTitle(mockImage, RectangleEdge.TOP,
-                alignment, VerticalAlignment.CENTER);
+        ImageTitle imageTitle = new ImageTitle(mockImage, Title.DEFAULT_POSITION,
+                alignment, Title.DEFAULT_VERTICAL_ALIGNMENT);
 
         assertEquals(alignment, imageTitle.getHorizontalAlignment());
     }
@@ -219,8 +224,8 @@ public class ImageTitleTest {
     @Test
     public void testConstructorHorizontalAlignmentCenter() {
         HorizontalAlignment alignment = HorizontalAlignment.CENTER;
-        ImageTitle imageTitle = new ImageTitle(mockImage, RectangleEdge.TOP,
-                alignment, VerticalAlignment.CENTER);
+        ImageTitle imageTitle = new ImageTitle(mockImage, Title.DEFAULT_POSITION,
+                alignment, Title.DEFAULT_VERTICAL_ALIGNMENT);
 
         assertEquals(alignment, imageTitle.getHorizontalAlignment());
     }
@@ -228,8 +233,8 @@ public class ImageTitleTest {
     @Test
     public void testConstructorHorizontalAlignmentLeft() {
         HorizontalAlignment alignment = HorizontalAlignment.LEFT;
-        ImageTitle imageTitle = new ImageTitle(mockImage, RectangleEdge.TOP,
-                alignment, VerticalAlignment.CENTER);
+        ImageTitle imageTitle = new ImageTitle(mockImage, Title.DEFAULT_POSITION,
+                alignment, Title.DEFAULT_VERTICAL_ALIGNMENT);
 
         assertEquals(alignment, imageTitle.getHorizontalAlignment());
     }
@@ -237,8 +242,8 @@ public class ImageTitleTest {
     @Test
     public void testConstructorVerticalAlignmentTop() {
         VerticalAlignment alignment = VerticalAlignment.TOP;
-        ImageTitle imageTitle = new ImageTitle(mockImage, RectangleEdge.TOP,
-                HorizontalAlignment.CENTER, alignment);
+        ImageTitle imageTitle = new ImageTitle(mockImage, Title.DEFAULT_POSITION,
+                Title.DEFAULT_HORIZONTAL_ALIGNMENT, alignment);
 
         assertEquals(alignment, imageTitle.getVerticalAlignment());
     }
@@ -246,8 +251,8 @@ public class ImageTitleTest {
     @Test
     public void testConstructorVerticalAlignmentCenter() {
         VerticalAlignment alignment = VerticalAlignment.CENTER;
-        ImageTitle imageTitle = new ImageTitle(mockImage, RectangleEdge.TOP,
-                HorizontalAlignment.CENTER, alignment);
+        ImageTitle imageTitle = new ImageTitle(mockImage, Title.DEFAULT_POSITION,
+                Title.DEFAULT_HORIZONTAL_ALIGNMENT, alignment);
 
         assertEquals(alignment, imageTitle.getVerticalAlignment());
     }
@@ -255,9 +260,46 @@ public class ImageTitleTest {
     @Test
     public void testConstructorVerticalAlignmentBottom() {
         VerticalAlignment alignment = VerticalAlignment.BOTTOM;
-        ImageTitle imageTitle = new ImageTitle(mockImage, RectangleEdge.TOP,
-                HorizontalAlignment.CENTER, alignment);
+        ImageTitle imageTitle = new ImageTitle(mockImage, Title.DEFAULT_POSITION,
+                Title.DEFAULT_HORIZONTAL_ALIGNMENT, alignment);
 
         assertEquals(alignment, imageTitle.getVerticalAlignment());
+    }
+
+    @Test
+    public void testPaddingZeroBoundary() {
+        RectangleInsets zeroPadding = new RectangleInsets(0, 0, 0, 0);
+        ImageTitle imageTitleZeroPad = new ImageTitle(mockImage, HEIGHT,
+                WIDTH, Title.DEFAULT_POSITION,
+                Title.DEFAULT_HORIZONTAL_ALIGNMENT,
+                Title.DEFAULT_VERTICAL_ALIGNMENT, zeroPadding);
+
+        assertEquals(zeroPadding, imageTitleZeroPad.getPadding());
+    }
+
+    @Test
+    public void testPaddingMaxBoundary() {
+        // QUESTION: It may be wise to add an upper boundary for padding?
+
+        RectangleInsets maxPadding = new RectangleInsets(Integer.MAX_VALUE,
+                Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
+        ImageTitle imageTitle = new ImageTitle(mockImage, HEIGHT, WIDTH,
+                Title.DEFAULT_POSITION, Title.DEFAULT_HORIZONTAL_ALIGNMENT,
+                Title.DEFAULT_VERTICAL_ALIGNMENT, maxPadding);
+
+        assertEquals(maxPadding, imageTitle.getPadding());
+    }
+
+    @Test
+    public void testPaddingMinBoundary() {
+
+        // QUESTION: Are negative values treated as 0 or ignored?
+        RectangleInsets minPadding = new RectangleInsets(Integer.MIN_VALUE,
+                Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
+        ImageTitle imageTitle = new ImageTitle(mockImage, HEIGHT, WIDTH,
+                Title.DEFAULT_POSITION, Title.DEFAULT_HORIZONTAL_ALIGNMENT,
+                Title.DEFAULT_VERTICAL_ALIGNMENT, minPadding);
+
+        assertEquals(minPadding, imageTitle.getPadding());
     }
 }
