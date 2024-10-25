@@ -275,4 +275,12 @@ public class TextTitleTest {
 
         assertEquals(font, t.getFont());
     }
+
+    @Test
+    public void testSetText() {
+        TextTitle t = new TextTitle("Text");
+        t.setText("Text");
+
+        assertEquals("Text", t.getText());
+    }
 }
