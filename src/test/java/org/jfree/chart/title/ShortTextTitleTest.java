@@ -37,15 +37,47 @@
 package org.jfree.chart.title;
 
 import org.jfree.chart.TestUtils;
+import org.jfree.chart.block.AbstractBlock;
+import org.jfree.chart.block.LengthConstraintType;
+import org.jfree.chart.block.RectangleConstraint;
 import org.jfree.chart.internal.CloneUtils;
+import org.jfree.data.Range;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.lang.reflect.Method;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.*;
+
 
 /**
  * Tests for the {@link ShortTextTitle} class.
  */
 public class ShortTextTitleTest {
+
+    private final String DEFAULT_TXT = "Hello";
+    private final int WIDTH = 50;
+    private final int HEIGHT = 50;
+
+    private Graphics2D g2;
+    private ShortTextTitle shortTextTitle;
+    private ShortTextTitle shortTextTitleSpy;
+
+    @BeforeEach
+    public void setUp() {
+        BufferedImage bufferedImage = new BufferedImage(WIDTH, HEIGHT,
+                BufferedImage.TYPE_INT_RGB);
+        g2 = bufferedImage.createGraphics();
+        shortTextTitle = new ShortTextTitle(DEFAULT_TXT);
+        shortTextTitleSpy = spy(shortTextTitle);
+    }
 
     /**
      * Check that the equals() method distinguishes all fields.
@@ -97,4 +129,51 @@ public class ShortTextTitleTest {
         assertEquals(t1, t2);
     }
 
+    @Test
+    public void testConstructor() {
+        ShortTextTitle shortTextTitle = new ShortTextTitle(DEFAULT_TXT);
+        assertEquals(DEFAULT_TXT, shortTextTitle.getText());
+    }
+
+    @Test
+    public void testConstructorNull() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new ShortTextTitle(null));
+    }
+
+    @Test
+    public void testArrangeLengthConstraintTypeNone() {
+        RectangleConstraint rc = new RectangleConstraint(0.0, null,
+                LengthConstraintType.NONE, 0.0, null,
+                LengthConstraintType.NONE);
+
+        shortTextTitleSpy.arrange(g2, rc);
+
+        verify(shortTextTitleSpy).arrangeNN(g2);
+    }
+
+    @Test
+    public void testArrangeHeightLengthConstraintTypeRange() {
+        RectangleConstraint rc = new RectangleConstraint(0.0, null,
+                LengthConstraintType.NONE, 0.0, null,
+                LengthConstraintType.RANGE);
+
+        Exception exception = assertThrows(RuntimeException.class,
+                () -> shortTextTitle.arrange(g2,
+                rc));
+
+        assertEquals("Not yet implemented.", exception.getMessage());
+    }
+
+    @Test
+    public void testArrangeHeightLengthConstraintTypeFixed() {
+        RectangleConstraint rc = new RectangleConstraint(0.0, null,
+                LengthConstraintType.NONE, 0.0, null,
+                LengthConstraintType.FIXED);
+
+        Exception exception = assertThrows(RuntimeException.class,
+                () -> shortTextTitle.arrange(g2, rc));
+
+        assertEquals("Not yet implemented.", exception.getMessage());
+    }
 }
