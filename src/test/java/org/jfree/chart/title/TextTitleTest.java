@@ -71,7 +71,7 @@ public class TextTitleTest {
      * Check that the equals() method distinguishes all fields.
      */
     @Test
-    public void testEquals() {
+    void testEquals() {
         TextTitle t1 = new TextTitle();
         TextTitle t2 = new TextTitle();
         assertEquals(t1, t2);
@@ -138,7 +138,7 @@ public class TextTitleTest {
      * Two objects that are equal are required to return the same hashCode.
      */
     @Test
-    public void testHashcode() {
+    void testHashcode() {
         TextTitle t1 = new TextTitle();
         TextTitle t2 = new TextTitle();
         assertEquals(t1, t2);
@@ -151,7 +151,7 @@ public class TextTitleTest {
      * Confirm that cloning works.
      */
     @Test
-    public void testCloning() throws CloneNotSupportedException {
+    void testCloning() throws CloneNotSupportedException {
         TextTitle t1 = new TextTitle();
         TextTitle t2 = CloneUtils.clone(t1);
         assertNotSame(t1, t2);
@@ -163,7 +163,7 @@ public class TextTitleTest {
      * Serialize an instance, restore it, and check for equality.
      */
     @Test
-    public void testSerialization() {
+    void testSerialization() {
         TextTitle t1 = new TextTitle("Test");
         TextTitle t2 = TestUtils.serialised(t1);
         assertEquals(t1, t2);
@@ -185,7 +185,7 @@ public class TextTitleTest {
 
     @ParameterizedTest
     @MethodSource("arrangeTestCases")
-    public void testArrangeWithDifferentConstraints(LengthConstraintType widthConstraint, LengthConstraintType heightConstraint, boolean shouldThrow) {
+    void testArrangeWithDifferentConstraints(LengthConstraintType widthConstraint, LengthConstraintType heightConstraint, boolean shouldThrow) {
         TextTitle title = new TextTitle("Test Title");
         Range range = new Range(0, 1.0);
         RectangleConstraint constraint = new RectangleConstraint(500, range, widthConstraint,
@@ -210,7 +210,7 @@ public class TextTitleTest {
 
     @ParameterizedTest
     @MethodSource("arrangeFNTestCases")
-    public void testArrangeFNWithDifferentPositionsAndExpansions(RectangleEdge position, Boolean expandToFit) {
+    void testArrangeFNWithDifferentPositionsAndExpansions(RectangleEdge position, Boolean expandToFit) {
         TextTitle title = new TextTitle("Test Title");
         title.setPosition(position);
         title.setExpandToFitSpace(expandToFit);
@@ -223,7 +223,7 @@ public class TextTitleTest {
     }
 
     @Test
-    public void testArrangeRN() {
+    void testArrangeRN() {
         TextTitle title = new TextTitle("Test Title");
         Range widthRange = new Range(0, 55.0);
 
@@ -236,7 +236,7 @@ public class TextTitleTest {
 
     @ParameterizedTest
     @MethodSource("arrangeRRTestCases")
-    public void testArrangeRRWithDifferentPositionsAndExpansions(RectangleEdge position, Boolean expandToFit) {
+    void testArrangeRRWithDifferentPositionsAndExpansions(RectangleEdge position, Boolean expandToFit) {
         TextTitle title = new TextTitle("Test Title");
         title.setPosition(position);
         title.setExpandToFitSpace(expandToFit);
@@ -266,7 +266,7 @@ public class TextTitleTest {
     }
 
     @Test
-    public void testSetFontAtConstruction() {
+    void testSetFontAtConstruction() {
         Font font = new Font("SansSerif", Font.PLAIN, 15);
         TextTitle t = new TextTitle("Text", font);
 
@@ -274,7 +274,7 @@ public class TextTitleTest {
     }
 
     @Test
-    public void testSetText() {
+    void testSetText() {
         TextTitle t = new TextTitle("Text");
         t.setText("Text");
 
@@ -282,7 +282,7 @@ public class TextTitleTest {
     }
 
     @Test
-    public void testSetFont() {
+    void testSetFont() {
         Font font = new Font("SansSerif", Font.PLAIN, 15);
         TextTitle t = new TextTitle("Text", font);
 
