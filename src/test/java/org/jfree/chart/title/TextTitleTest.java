@@ -36,15 +36,24 @@
 
 package org.jfree.chart.title;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GradientPaint;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.stream.Stream;
 
 import org.jfree.chart.TestUtils;
 import org.jfree.chart.api.HorizontalAlignment;
+import org.jfree.chart.api.RectangleEdge;
+import org.jfree.chart.block.LengthConstraintType;
+import org.jfree.chart.block.RectangleConstraint;
+import org.jfree.chart.block.Size2D;
 import org.jfree.chart.internal.CloneUtils;
 
+import org.jfree.data.Range;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -153,6 +162,53 @@ public class TextTitleTest {
         TextTitle t1 = new TextTitle("Test");
         TextTitle t2 = TestUtils.serialised(t1);
         assertEquals(t1, t2);
+    }
+
+    private static Stream<Arguments> arrangeTestCases() {
+        return Stream.of(
+                Arguments.of(LengthConstraintType.NONE, LengthConstraintType.NONE, false),
+                Arguments.of(LengthConstraintType.NONE, LengthConstraintType.RANGE, true),
+                Arguments.of(LengthConstraintType.NONE, LengthConstraintType.FIXED, true),
+                Arguments.of(LengthConstraintType.FIXED, LengthConstraintType.FIXED, true),
+                Arguments.of(LengthConstraintType.FIXED, LengthConstraintType.NONE, false),
+                Arguments.of(LengthConstraintType.FIXED, LengthConstraintType.RANGE, true),
+                Arguments.of(LengthConstraintType.RANGE, LengthConstraintType.RANGE, false),
+                Arguments.of(LengthConstraintType.RANGE, LengthConstraintType.NONE, false),
+                Arguments.of(LengthConstraintType.RANGE, LengthConstraintType.FIXED, true)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("arrangeTestCases")
+    public void testArrangeWithDifferentConstraints(LengthConstraintType widthConstraint, LengthConstraintType heightConstraint, boolean shouldThrow) {
+        TextTitle title = new TextTitle("Test Title");
+        Range range = new Range(0, 1.0);
+        RectangleConstraint constraint = new RectangleConstraint(500, range, widthConstraint,
+                500, range, heightConstraint);
+
+        if (shouldThrow) {
+            Assertions.assertThrows(RuntimeException.class, () -> title.arrange(createTestGraphics2D(), constraint));
+        } else {
+            Size2D bounds = title.arrange(createTestGraphics2D(), constraint);
+            Assertions.assertNotNull(bounds);
+        }
+    }
+
+    /**
+     * Create a BufferedImage to get a valid Graphics2D object
+     * @return a Graphics2D object
+     */
+    private Graphics2D createTestGraphics2D() {
+        return new BufferedImage(500, 100, BufferedImage.TYPE_INT_ARGB).createGraphics();
+    }
+
+    private static Stream<Arguments> arrangeFNTestCases() {
+        return Stream.of(
+                Arguments.of(RectangleEdge.TOP, Boolean.TRUE),
+                Arguments.of(RectangleEdge.TOP, Boolean.FALSE),
+                Arguments.of(RectangleEdge.LEFT, Boolean.TRUE),
+                Arguments.of(RectangleEdge.LEFT, Boolean.FALSE)
+        );
     }
 
 }
