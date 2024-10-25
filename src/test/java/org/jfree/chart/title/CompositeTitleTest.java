@@ -38,21 +38,99 @@ package org.jfree.chart.title;
 
 import java.awt.Color;
 import java.awt.GradientPaint;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 
+import org.jfree.chart.ChartElementVisitor;
 import org.jfree.chart.TestUtils;
 
 import org.jfree.chart.block.BlockBorder;
 import org.jfree.chart.block.BlockContainer;
 import org.jfree.chart.api.RectangleInsets;
+import org.jfree.chart.block.RectangleConstraint;
+import org.jfree.chart.block.Size2D;
 import org.jfree.chart.internal.CloneUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests for the {@link CompositeTitle} class.
  */
 public class CompositeTitleTest {
+
+    CompositeTitle ct;
+    BlockContainer bc;
+
+    @BeforeEach
+    public void setUp() {
+        bc = mock(BlockContainer.class);
+        ct = new CompositeTitle(bc);
+
+    }
+
+
+    /**
+     * -NEW-
+     */
+    @Test
+    public void testSetTitleContainer() {
+        ct.setTitleContainer(bc);
+        assertEquals(ct.getContainer(), bc);
+    }
+
+    /**
+     *  -NEW- Test receive()
+     */
+    @Test
+    public void testReceive() {
+        ChartElementVisitor mockVisitor = mock(ChartElementVisitor.class);
+        ct.receive(mockVisitor);
+        verify(mockVisitor).visit(ct);
+    }
+
+    /**
+     *  -NEW- For branch when objects are *same*.
+     */
+    @Test
+    public void testEqualsWhenSame() {
+        CompositeTitle ct2 = ct;
+        assertTrue(ct.equals(ct2));
+    }
+
+    /**
+     *  -NEW- For branch when objects are of different class.
+     */
+    @Test
+    public void testEqualsOtherClass() {
+        assertFalse(ct.equals(bc));
+    }
+
+    /**
+     *  -NEW- Verify that no-parameters draw calls the overloaded version
+     */
+    @Test
+    public void testDraw() {
+        CompositeTitle titleSpy = spy(ct);
+
+        BufferedImage bufferedImage = new BufferedImage(10, 10, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2 = bufferedImage.createGraphics();
+        Rectangle2D area = new Rectangle2D.Double(0, 0, 10, 10);
+
+        titleSpy.draw(g2, area);
+
+        // Check that it overloads
+        verify(titleSpy).draw(g2, area, null);
+
+        g2.dispose();
+    }
 
     /**
      * Some checks for the constructor.
