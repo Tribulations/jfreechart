@@ -206,15 +206,24 @@ public class TextTitleTest {
     @ParameterizedTest
     @MethodSource("arrangeFNTestCases")
     public void testArrangeFNWithDifferentPositionsAndExpansions(RectangleEdge position, Boolean expandToFit) {
-        // Arrange
         TextTitle title = new TextTitle("Test Title");
         title.setPosition(position);
         title.setExpandToFitSpace(expandToFit);
 
-        // Act
         Size2D size = title.arrangeFN(createTestGraphics2D(), 100);
 
-        // Assert
+        assertNotNull(size);
+        assertTrue(size.getWidth() > 0);
+        assertTrue(size.getHeight() > 0);
+    }
+
+    @Test
+    public void testArrangeRN() {
+        TextTitle title = new TextTitle("Test Title");
+        Range widthRange = new Range(0, 55.0);
+
+        Size2D size = title.arrangeRN(createTestGraphics2D(), widthRange);
+
         assertNotNull(size);
         assertTrue(size.getWidth() > 0);
         assertTrue(size.getHeight() > 0);
