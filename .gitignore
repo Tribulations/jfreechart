@@ -12,3 +12,6 @@
 *.iml
 *.ipr
 *.iws
+
+#MacOS
+.DS_STORE
