@@ -267,4 +267,12 @@ public class TextTitleTest {
                 Arguments.of(RectangleEdge.LEFT, Boolean.FALSE)
         );
     }
+
+    @Test
+    public void testSetFontAtConstruction() {
+        Font font = new Font("SansSerif", Font.PLAIN, 15);
+        TextTitle t = new TextTitle("Text", font);
+
+        assertEquals(font, t.getFont());
+    }
 }
