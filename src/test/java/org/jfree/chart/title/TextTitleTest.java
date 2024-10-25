@@ -237,16 +237,13 @@ public class TextTitleTest {
     @ParameterizedTest
     @MethodSource("arrangeRRTestCases")
     public void testArrangeRRWithDifferentPositionsAndExpansions(RectangleEdge position, Boolean expandToFit) {
-        // Arrange
         TextTitle title = new TextTitle("Test Title");
         title.setPosition(position);
         title.setExpandToFitSpace(expandToFit);
         Range range = new Range(0, 10.0);
 
-        // Act
         Size2D size = title.arrangeRR(createTestGraphics2D(), range, range);
 
-        // Assert
         assertNotNull(size);
         assertTrue(size.getWidth() > 0);
         assertTrue(size.getHeight() > 0);
@@ -282,5 +279,15 @@ public class TextTitleTest {
         t.setText("Text");
 
         assertEquals("Text", t.getText());
+    }
+
+    @Test
+    public void testSetFont() {
+        Font font = new Font("SansSerif", Font.PLAIN, 15);
+        TextTitle t = new TextTitle("Text", font);
+
+        t.setFont(new Font("SansSerif", Font.PLAIN, 15));
+
+        assertEquals(font, t.getFont());
     }
 }
