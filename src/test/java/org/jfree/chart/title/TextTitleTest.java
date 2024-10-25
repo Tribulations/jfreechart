@@ -194,14 +194,6 @@ public class TextTitleTest {
         }
     }
 
-    /**
-     * Create a BufferedImage to get a valid Graphics2D object
-     * @return a Graphics2D object
-     */
-    private Graphics2D createTestGraphics2D() {
-        return new BufferedImage(500, 100, BufferedImage.TYPE_INT_ARGB).createGraphics();
-    }
-
     private static Stream<Arguments> arrangeFNTestCases() {
         return Stream.of(
                 Arguments.of(RectangleEdge.TOP, Boolean.TRUE),
@@ -209,6 +201,31 @@ public class TextTitleTest {
                 Arguments.of(RectangleEdge.LEFT, Boolean.TRUE),
                 Arguments.of(RectangleEdge.LEFT, Boolean.FALSE)
         );
+    }
+
+    @ParameterizedTest
+    @MethodSource("arrangeFNTestCases")
+    public void testArrangeFNWithDifferentPositionsAndExpansions(RectangleEdge position, Boolean expandToFit) {
+        // Arrange
+        TextTitle title = new TextTitle("Test Title");
+        title.setPosition(position);
+        title.setExpandToFitSpace(expandToFit);
+
+        // Act
+        Size2D size = title.arrangeFN(createTestGraphics2D(), 100);
+
+        // Assert
+        assertNotNull(size);
+        assertTrue(size.getWidth() > 0);
+        assertTrue(size.getHeight() > 0);
+    }
+
+    /**
+     * Create a BufferedImage to get a valid Graphics2D object
+     * @return a Graphics2D object
+     */
+    private Graphics2D createTestGraphics2D() {
+        return new BufferedImage(500, 100, BufferedImage.TYPE_INT_ARGB).createGraphics();
     }
 
 }
