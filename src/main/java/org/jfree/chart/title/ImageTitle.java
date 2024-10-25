@@ -119,6 +119,7 @@ public class ImageTitle extends Title {
                       RectangleInsets padding) {
 
         super(position, horizontalAlignment, verticalAlignment, padding);
+        requireNonNull(image, "Null 'image' argument.");
         this.image = image;
         setHeight(height);
         setWidth(width);
