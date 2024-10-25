@@ -36,10 +36,16 @@
 
 package org.jfree.chart.title;
 
+import java.lang.reflect.Field;
+import javax.swing.event.EventListenerList;
+import org.jfree.chart.ChartElementVisitor;
 import org.jfree.chart.api.HorizontalAlignment;
 import org.jfree.chart.api.RectangleEdge;
 import org.jfree.chart.api.VerticalAlignment;
+import static org.mockito.Mockito.*;
 
+import org.jfree.chart.event.TitleChangeListener;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,7 +54,18 @@ import static org.junit.jupiter.api.Assertions.*;
  * Tests for the abstract {@link Title} class.
  */
 public class TitleTest {
+    TextTitle textTitle;
+    VerticalAlignment verticalAlignment = VerticalAlignment.TOP;
+    HorizontalAlignment horizontalAlignment = HorizontalAlignment.LEFT;
+    RectangleEdge position = RectangleEdge.BOTTOM;
 
+    @BeforeEach
+    public void setUp() {
+        textTitle = new TextTitle();
+        textTitle.setVerticalAlignment(verticalAlignment);
+        textTitle.setHorizontalAlignment(horizontalAlignment);
+        textTitle.setPosition(position);
+    }
     /**
      * Some checks for the equals() method.
      */
@@ -93,4 +110,139 @@ public class TitleTest {
         assertEquals(h1, h2);
     }
 
+    /**
+     * Asserts that the correct exception type is thrown when a null argument is provided.
+     */
+    @Test
+    void testSetHorizontalAlignmentNullValue() {
+        assertThrows(IllegalArgumentException.class, () -> textTitle.setHorizontalAlignment(null));
+    }
+
+    /**
+     * Asserts that the correct exception type is thrown when a null argument is provided.
+     */
+    @Test
+    void testSetVerticalAlignmentNullValue() {
+        assertThrows(IllegalArgumentException.class, () -> textTitle.setVerticalAlignment(null));
+    }
+
+    /**
+     * Asserts that the correct exception type is thrown when a null argument is provided.
+     */
+    @Test
+    void testSetPositionNullValue() {
+        assertThrows(IllegalArgumentException.class, () -> textTitle.setPosition(null));
+    }
+
+    /**
+     * Verify that notify is correctly set to false.
+     */
+    @Test
+    void testSetNotifyToFalse() {
+        textTitle.setNotify(false);
+        assertFalse(textTitle.getNotify());
+    }
+
+    /**
+     * Verify that notify is correctly set to true.
+     */
+    @Test
+    void testSetNotifyToTrue() {
+        textTitle.setNotify(true);
+        assertTrue(textTitle.getNotify());
+    }
+
+    /**
+     * Verify that visit is called exactly once when Title::receive is called.
+     */
+    @Test
+    void testReceiveCallsVisit() {
+        ChartElementVisitor mockVisitor = mock(ChartElementVisitor.class);
+        textTitle.receive(mockVisitor);
+
+        verify(mockVisitor, times(1)).visit(textTitle);
+    }
+
+    /**
+     * Verifies that a listener is correctly added to the listenerList.
+     * @throws NoSuchFieldException if field is not found.
+     * @throws IllegalAccessException if field cannot be accessed.
+     */
+    @Test
+    public void testAddChangeListener() throws NoSuchFieldException, IllegalAccessException {
+        //setup
+        TitleChangeListener listener = mock(TitleChangeListener.class);
+        Field field = Title.class.getDeclaredField("listenerList");
+        field.setAccessible(true);
+        EventListenerList list = (EventListenerList) field.get(textTitle);
+        // exercise
+        textTitle.addChangeListener(listener);
+        // assert
+        assertEquals(1, list.getListenerCount(TitleChangeListener.class));
+    }
+
+    /**
+     * Verifies that the same listener cannot be added to the listenerList twice.
+     * @throws NoSuchFieldException if field is not found.
+     * @throws IllegalAccessException if field cannot be accessed.
+     */
+    @Test
+    public void testAddChangeListenerTwice() throws NoSuchFieldException, IllegalAccessException {
+        //setup
+        TitleChangeListener listener = mock(TitleChangeListener.class);
+        Field field = Title.class.getDeclaredField("listenerList");
+        field.setAccessible(true);
+        EventListenerList list = (EventListenerList) field.get(textTitle);
+        // exercise
+        textTitle.addChangeListener(listener);
+        textTitle.addChangeListener(listener);
+        // assert
+        assertEquals(1, list.getListenerCount(TitleChangeListener.class));
+    }
+
+    /**
+     * Verifies that a listener is successfully removed by removeChangeListener().
+     * @throws NoSuchFieldException if field is not found.
+     * @throws IllegalAccessException if field cannot be accessed.
+     */
+    @Test
+    public void testRemoveChangeListener() throws NoSuchFieldException, IllegalAccessException {
+        //setup
+        TitleChangeListener listener1 = mock(TitleChangeListener.class);
+        TitleChangeListener listener2 = mock(TitleChangeListener.class);
+        Field field = Title.class.getDeclaredField("listenerList");
+        field.setAccessible(true); // access private field by using reflection
+        EventListenerList list = (EventListenerList) field.get(textTitle);
+        textTitle.addChangeListener(listener1);
+        textTitle.addChangeListener(listener2);
+
+        // exercise
+        textTitle.removeChangeListener(listener1);
+
+        // assert
+        assertEquals(1, list.getListenerCount(TitleChangeListener.class));
+    }
+
+    /**
+     * Ensure that the removeChangeListener method can handle the special case of trying to remove
+     * a listener which is not present.
+     * @throws NoSuchFieldException if field is not found.
+     * @throws IllegalAccessException if field cannot be accessed.
+     */
+    @Test
+    public void testRemoveChangeListenerTwice() throws NoSuchFieldException, IllegalAccessException {
+        //setup
+        TitleChangeListener listener1 = mock(TitleChangeListener.class);
+        TitleChangeListener listener2 = mock(TitleChangeListener.class);
+        Field field = Title.class.getDeclaredField("listenerList");
+        field.setAccessible(true); // access private field by using reflection
+        EventListenerList list = (EventListenerList) field.get(textTitle);
+        textTitle.addChangeListener(listener1);
+        textTitle.addChangeListener(listener2);
+        // exercise
+        textTitle.removeChangeListener(listener1);
+        textTitle.removeChangeListener(listener1);
+        // assert
+        assertEquals(1, list.getListenerCount(TitleChangeListener.class));
+    }
 }
