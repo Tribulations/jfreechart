@@ -169,6 +169,10 @@ public class TextTitleTest {
         assertEquals(t1, t2);
     }
 
+    /**
+     * Provides test cases combining different LengthConstraintTypes for width and height,
+     * with expected exception behavior.
+     */
     private static Stream<Arguments> arrangeTestCases() {
         return Stream.of(
                 Arguments.of(LengthConstraintType.NONE, LengthConstraintType.NONE, false),
@@ -183,6 +187,9 @@ public class TextTitleTest {
         );
     }
 
+    /**
+     * Tests TextTitle arrangement with various width/height constraints.
+     */
     @ParameterizedTest
     @MethodSource("arrangeTestCases")
     void testArrangeWithDifferentConstraints(LengthConstraintType widthConstraint, LengthConstraintType heightConstraint, boolean shouldThrow) {
@@ -199,6 +206,9 @@ public class TextTitleTest {
         }
     }
 
+    /**
+     * Provides test cases for different positions and expansion settings.
+     */
     private static Stream<Arguments> arrangeFNTestCases() {
         return Stream.of(
                 Arguments.of(RectangleEdge.TOP, Boolean.TRUE),
@@ -208,6 +218,9 @@ public class TextTitleTest {
         );
     }
 
+    /**
+     * Tests arrangeFN with varying positions and expansion settings.
+     */
     @ParameterizedTest
     @MethodSource("arrangeFNTestCases")
     void testArrangeFNWithDifferentPositionsAndExpansions(RectangleEdge position, Boolean expandToFit) {
@@ -222,6 +235,9 @@ public class TextTitleTest {
         assertTrue(size.getHeight() > 0);
     }
 
+    /**
+     * Tests arrangeRN with a width range constraint.
+     */
     @Test
     void testArrangeRN() {
         TextTitle title = new TextTitle("Test Title");
@@ -234,6 +250,20 @@ public class TextTitleTest {
         assertTrue(size.getHeight() > 0);
     }
 
+    /**
+     * Provides test cases for different positions and expansion settings.
+     */
+    private static Stream<Arguments> arrangeRRTestCases() {
+        return Stream.of(
+                Arguments.of(RectangleEdge.TOP, Boolean.TRUE),
+                Arguments.of(RectangleEdge.LEFT, Boolean.TRUE),
+                Arguments.of(RectangleEdge.LEFT, Boolean.FALSE)
+        );
+    }
+
+    /**
+     * Tests arrangeRR with varying positions and expansion settings.
+     */
     @ParameterizedTest
     @MethodSource("arrangeRRTestCases")
     void testArrangeRRWithDifferentPositionsAndExpansions(RectangleEdge position, Boolean expandToFit) {
@@ -257,14 +287,11 @@ public class TextTitleTest {
         return new BufferedImage(500, 100, BufferedImage.TYPE_INT_ARGB).createGraphics();
     }
 
-    private static Stream<Arguments> arrangeRRTestCases() {
-        return Stream.of(
-                Arguments.of(RectangleEdge.TOP, Boolean.TRUE),
-                Arguments.of(RectangleEdge.LEFT, Boolean.TRUE),
-                Arguments.of(RectangleEdge.LEFT, Boolean.FALSE)
-        );
-    }
-
+    /**
+     * Verifies that the Font object passed during TextTitle construction
+     * is correctly set and can be retrieved. This test ensures the constructor
+     * properly initializes the font property.
+     */
     @Test
     void testSetFontAtConstruction() {
         Font font = new Font("SansSerif", Font.PLAIN, 15);
@@ -273,6 +300,11 @@ public class TextTitleTest {
         assertEquals(font, t.getFont());
     }
 
+    /**
+     * Tests the setText method of TextTitle to ensure it correctly stores
+     * and retrieves the text value. This test verifies both the setter
+     * and getter functionality for the text property.
+     */
     @Test
     void testSetText() {
         TextTitle t = new TextTitle("Text");
@@ -281,6 +313,11 @@ public class TextTitleTest {
         assertEquals("Text", t.getText());
     }
 
+    /**
+     * Validates that the setFont method properly updates the font property
+     * of a TextTitle instance. This test ensures that changing the font
+     * after construction works as expected.
+     */
     @Test
     void testSetFont() {
         Font font = new Font("SansSerif", Font.PLAIN, 15);
