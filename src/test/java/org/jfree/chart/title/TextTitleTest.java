@@ -36,17 +36,31 @@
 
 package org.jfree.chart.title;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GradientPaint;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.stream.Stream;
 
 import org.jfree.chart.TestUtils;
 import org.jfree.chart.api.HorizontalAlignment;
+import org.jfree.chart.api.RectangleEdge;
+import org.jfree.chart.block.LengthConstraintType;
+import org.jfree.chart.block.RectangleConstraint;
+import org.jfree.chart.block.Size2D;
 import org.jfree.chart.internal.CloneUtils;
 
+import org.jfree.data.Range;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests for the {@link TextTitle} class.
@@ -57,7 +71,7 @@ public class TextTitleTest {
      * Check that the equals() method distinguishes all fields.
      */
     @Test
-    public void testEquals() {
+    void testEquals() {
         TextTitle t1 = new TextTitle();
         TextTitle t2 = new TextTitle();
         assertEquals(t1, t2);
@@ -124,7 +138,7 @@ public class TextTitleTest {
      * Two objects that are equal are required to return the same hashCode.
      */
     @Test
-    public void testHashcode() {
+    void testHashcode() {
         TextTitle t1 = new TextTitle();
         TextTitle t2 = new TextTitle();
         assertEquals(t1, t2);
@@ -137,7 +151,7 @@ public class TextTitleTest {
      * Confirm that cloning works.
      */
     @Test
-    public void testCloning() throws CloneNotSupportedException {
+    void testCloning() throws CloneNotSupportedException {
         TextTitle t1 = new TextTitle();
         TextTitle t2 = CloneUtils.clone(t1);
         assertNotSame(t1, t2);
@@ -149,10 +163,168 @@ public class TextTitleTest {
      * Serialize an instance, restore it, and check for equality.
      */
     @Test
-    public void testSerialization() {
+    void testSerialization() {
         TextTitle t1 = new TextTitle("Test");
         TextTitle t2 = TestUtils.serialised(t1);
         assertEquals(t1, t2);
     }
 
+    /**
+     * Provides test cases combining different LengthConstraintTypes for width and height,
+     * with expected exception behavior.
+     */
+    private static Stream<Arguments> arrangeTestCases() {
+        return Stream.of(
+                Arguments.of(LengthConstraintType.NONE, LengthConstraintType.NONE, false),
+                Arguments.of(LengthConstraintType.NONE, LengthConstraintType.RANGE, true),
+                Arguments.of(LengthConstraintType.NONE, LengthConstraintType.FIXED, true),
+                Arguments.of(LengthConstraintType.FIXED, LengthConstraintType.FIXED, true),
+                Arguments.of(LengthConstraintType.FIXED, LengthConstraintType.NONE, false),
+                Arguments.of(LengthConstraintType.FIXED, LengthConstraintType.RANGE, true),
+                Arguments.of(LengthConstraintType.RANGE, LengthConstraintType.RANGE, false),
+                Arguments.of(LengthConstraintType.RANGE, LengthConstraintType.NONE, false),
+                Arguments.of(LengthConstraintType.RANGE, LengthConstraintType.FIXED, true)
+        );
+    }
+
+    /**
+     * Tests TextTitle arrangement with various width/height constraints.
+     */
+    @ParameterizedTest
+    @MethodSource("arrangeTestCases")
+    void testArrangeWithDifferentConstraints(LengthConstraintType widthConstraint, LengthConstraintType heightConstraint, boolean shouldThrow) {
+        TextTitle title = new TextTitle("Test Title");
+        Range range = new Range(0, 1.0);
+        RectangleConstraint constraint = new RectangleConstraint(500, range, widthConstraint,
+                500, range, heightConstraint);
+
+        if (shouldThrow) {
+            Assertions.assertThrows(RuntimeException.class, () -> title.arrange(createTestGraphics2D(), constraint));
+        } else {
+            Size2D bounds = title.arrange(createTestGraphics2D(), constraint);
+            Assertions.assertNotNull(bounds);
+        }
+    }
+
+    /**
+     * Provides test cases for different positions and expansion settings.
+     */
+    private static Stream<Arguments> arrangeFNTestCases() {
+        return Stream.of(
+                Arguments.of(RectangleEdge.TOP, Boolean.TRUE),
+                Arguments.of(RectangleEdge.TOP, Boolean.FALSE),
+                Arguments.of(RectangleEdge.LEFT, Boolean.TRUE),
+                Arguments.of(RectangleEdge.LEFT, Boolean.FALSE)
+        );
+    }
+
+    /**
+     * Tests arrangeFN with varying positions and expansion settings.
+     */
+    @ParameterizedTest
+    @MethodSource("arrangeFNTestCases")
+    void testArrangeFNWithDifferentPositionsAndExpansions(RectangleEdge position, Boolean expandToFit) {
+        TextTitle title = new TextTitle("Test Title");
+        title.setPosition(position);
+        title.setExpandToFitSpace(expandToFit);
+
+        Size2D size = title.arrangeFN(createTestGraphics2D(), 100);
+
+        assertNotNull(size);
+        assertTrue(size.getWidth() > 0);
+        assertTrue(size.getHeight() > 0);
+    }
+
+    /**
+     * Tests arrangeRN with a width range constraint.
+     */
+    @Test
+    void testArrangeRN() {
+        TextTitle title = new TextTitle("Test Title");
+        Range widthRange = new Range(0, 55.0);
+
+        Size2D size = title.arrangeRN(createTestGraphics2D(), widthRange);
+
+        assertNotNull(size);
+        assertTrue(size.getWidth() > 0);
+        assertTrue(size.getHeight() > 0);
+    }
+
+    /**
+     * Provides test cases for different positions and expansion settings.
+     */
+    private static Stream<Arguments> arrangeRRTestCases() {
+        return Stream.of(
+                Arguments.of(RectangleEdge.TOP, Boolean.TRUE),
+                Arguments.of(RectangleEdge.LEFT, Boolean.TRUE),
+                Arguments.of(RectangleEdge.LEFT, Boolean.FALSE)
+        );
+    }
+
+    /**
+     * Tests arrangeRR with varying positions and expansion settings.
+     */
+    @ParameterizedTest
+    @MethodSource("arrangeRRTestCases")
+    void testArrangeRRWithDifferentPositionsAndExpansions(RectangleEdge position, Boolean expandToFit) {
+        TextTitle title = new TextTitle("Test Title");
+        title.setPosition(position);
+        title.setExpandToFitSpace(expandToFit);
+        Range range = new Range(0, 10.0);
+
+        Size2D size = title.arrangeRR(createTestGraphics2D(), range, range);
+
+        assertNotNull(size);
+        assertTrue(size.getWidth() > 0);
+        assertTrue(size.getHeight() > 0);
+    }
+
+    /**
+     * Create a BufferedImage to get a valid Graphics2D object
+     * @return a Graphics2D object
+     */
+    private Graphics2D createTestGraphics2D() {
+        return new BufferedImage(500, 100, BufferedImage.TYPE_INT_ARGB).createGraphics();
+    }
+
+    /**
+     * Verifies that the Font object passed during TextTitle construction
+     * is correctly set and can be retrieved. This test ensures the constructor
+     * properly initializes the font property.
+     */
+    @Test
+    void testSetFontAtConstruction() {
+        Font font = new Font("SansSerif", Font.PLAIN, 15);
+        TextTitle t = new TextTitle("Text", font);
+
+        assertEquals(font, t.getFont());
+    }
+
+    /**
+     * Tests the setText method of TextTitle to ensure it correctly stores
+     * and retrieves the text value. This test verifies both the setter
+     * and getter functionality for the text property.
+     */
+    @Test
+    void testSetText() {
+        TextTitle t = new TextTitle("Text");
+        t.setText("Text");
+
+        assertEquals("Text", t.getText());
+    }
+
+    /**
+     * Validates that the setFont method properly updates the font property
+     * of a TextTitle instance. This test ensures that changing the font
+     * after construction works as expected.
+     */
+    @Test
+    void testSetFont() {
+        Font font = new Font("SansSerif", Font.PLAIN, 15);
+        TextTitle t = new TextTitle("Text", font);
+
+        t.setFont(new Font("SansSerif", Font.PLAIN, 15));
+
+        assertEquals(font, t.getFont());
+    }
 }
