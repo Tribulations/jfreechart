@@ -38,17 +38,33 @@ package org.jfree.chart.title;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.util.Locale;
 
+import net.bytebuddy.build.ToStringPlugin;
 import org.jfree.chart.TestUtils;
 import org.jfree.chart.internal.CloneUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 /**
  * Tests for the {@link DateTitle} class.
  */
 public class DateTitleTest {
+
+
+
+    @Test
+    public void testSetDateFormat() {
+        var titleSpy = spy(new DateTitle());
+        int style = 1;
+        Locale locale = Locale.JAPAN;
+        titleSpy.setDateFormat(style, locale);
+        verify(titleSpy).setText(any());
+    }
 
     /**
      * Check that the equals() method distinguishes all fields.
