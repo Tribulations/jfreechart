@@ -229,6 +229,24 @@ public class TextTitleTest {
         assertTrue(size.getHeight() > 0);
     }
 
+    @ParameterizedTest
+    @MethodSource("arrangeRRTestCases")
+    public void testArrangeRRWithDifferentPositionsAndExpansions(RectangleEdge position, Boolean expandToFit) {
+        // Arrange
+        TextTitle title = new TextTitle("Test Title");
+        title.setPosition(position);
+        title.setExpandToFitSpace(expandToFit);
+        Range range = new Range(0, 10.0);
+
+        // Act
+        Size2D size = title.arrangeRR(createTestGraphics2D(), range, range);
+
+        // Assert
+        assertNotNull(size);
+        assertTrue(size.getWidth() > 0);
+        assertTrue(size.getHeight() > 0);
+    }
+
     /**
      * Create a BufferedImage to get a valid Graphics2D object
      * @return a Graphics2D object
@@ -237,4 +255,11 @@ public class TextTitleTest {
         return new BufferedImage(500, 100, BufferedImage.TYPE_INT_ARGB).createGraphics();
     }
 
+    private static Stream<Arguments> arrangeRRTestCases() {
+        return Stream.of(
+                Arguments.of(RectangleEdge.TOP, Boolean.TRUE),
+                Arguments.of(RectangleEdge.LEFT, Boolean.TRUE),
+                Arguments.of(RectangleEdge.LEFT, Boolean.FALSE)
+        );
+    }
 }
